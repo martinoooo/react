@@ -141,6 +141,8 @@ describe('ReactElement', () => {
     }
   });
 
+  // 会将props传递的值赋值给内部的props，所以不会重用原始的props对象
+  // 注意： 只是浅复制，如果里面的值为对象，则还是引用关系
   it('does not reuse the original config object', () => {
     const config = {foo: 1};
     const element = React.createFactory(ComponentClass)(config);
@@ -171,6 +173,7 @@ describe('ReactElement', () => {
     expect(element.props).toEqual({foo: '56'});
   });
 
+  // 只会判断key和ref是否为undefined，如果是null则还是有定义的
   it('extracts null key and ref', () => {
     const element = React.createFactory(ComponentClass)({
       key: null,
@@ -211,6 +214,7 @@ describe('ReactElement', () => {
     expect(elementB.ref).toBe(null);
   });
 
+  // 会将key转为string
   it('coerces the key to a string', () => {
     const element = React.createFactory(ComponentClass)({
       key: 12,
@@ -243,6 +247,7 @@ describe('ReactElement', () => {
     expect(element._owner.stateNode).toBe(instance);
   });
 
+  // props里面传递children会被真实的children覆盖(即使chilren是null)
   it('merges an additional argument onto the children prop', () => {
     const a = 1;
     const element = React.createFactory(ComponentClass)(
@@ -254,6 +259,7 @@ describe('ReactElement', () => {
     expect(element.props.children).toBe(a);
   });
 
+  // 如果没有children，则props里面传递children不会被覆盖
   it('does not override children if no rest args are provided', () => {
     const element = React.createFactory(ComponentClass)({
       children: 'text',
@@ -271,6 +277,7 @@ describe('ReactElement', () => {
     expect(element.props.children).toBe(null);
   });
 
+  // 如果有多于的参数，则children会成为数组
   it('merges rest arguments onto the children prop in an array', () => {
     const a = 1;
     const b = 2;
@@ -367,6 +374,7 @@ describe('ReactElement', () => {
     expect(inst2.props.prop).toBe(null);
   });
 
+  // 在dev环境下会freeze props。所以不可以手动修改element的props
   it('throws when changing a prop (in dev) after element creation', () => {
     class Outer extends React.Component {
       render() {
@@ -434,6 +442,7 @@ describe('ReactElement', () => {
 
   // NOTE: We're explicitly not using JSX here. This is intended to test
   // classic JS without JSX.
+  // 如果是支持symbol的，则json之后的element再parse不是一个valid的element
   it('identifies elements, but not JSON, if Symbols are supported', () => {
     // Rudimentary polyfill
     // Once all jest engines support Symbols natively we can swap this to test

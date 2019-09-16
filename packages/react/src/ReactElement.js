@@ -374,6 +374,7 @@ export function createElement(type, config, children) {
         typeof type === 'function'
           ? type.displayName || type.name || 'Unknown'
           : type;
+      // 如果传递的props里面有key或者ref。则需要设置key和ref的getter为警告，这样如果子组件使用props的key和ref就会发出警告
       if (key) {
         defineKeyPropWarningGetter(props, displayName);
       }
